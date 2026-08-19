@@ -1,0 +1,16 @@
+# Ambiente virtual
+.venv/
+venv/
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Banco de dados local (gerado automaticamente)
+instance/
+
+# Configurações do editor / SO
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

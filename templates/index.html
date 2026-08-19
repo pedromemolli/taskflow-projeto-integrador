@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TaskFlow</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <main id="conteudo" class="container">
+    <header>
+      <h1>TaskFlow</h1>
+      <p>Organize suas tarefas e seus prazos.</p>
+      <a class="botao" href="{{ url_for('create_task') }}">Nova tarefa</a>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}<p class="mensagem {{ category }}" role="status">{{ message }}</p>{% endfor %}
+    {% endwith %}
+
+    <section aria-labelledby="resumo"><h2 id="resumo">Resumo</h2>
+      <p>{{ totals.total }} no total · {{ totals.pending or 0 }} pendentes · {{ totals.in_progress or 0 }} em andamento · {{ totals.completed or 0 }} concluídas</p>
+    </section>
+
+    <section aria-labelledby="lista"><h2 id="lista">Lista de tarefas</h2>
+      {% if tasks %}
+      <table>
+        <thead><tr><th>Tarefa</th><th>Data de prazo</th><th>Prioridade</th><th>Situação</th><th>Ações</th></tr></thead>
+        <tbody>
+        {% for task in tasks %}
+          <tr>
+            <td><strong>{{ task.title }}</strong>{% if task.description %}<br><small>{{ task.description }}</small>{% endif %}</td>
+            <td>{{ task.due_date[8:10] }}/{{ task.due_date[5:7] }}/{{ task.due_date[0:4] }}</td>
+            <td>{{ task.priority }}</td><td>{{ task.status }}</td>
+            <td class="acoes">
+              <a href="{{ url_for('edit_task', task_id=task.id) }}">Editar</a>
+              {% if task.status != 'Concluída' %}<form action="{{ url_for('complete_task', task_id=task.id) }}" method="post"><button>Concluir</button></form>{% endif %}
+              <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post"><button class="perigo">Excluir</button></form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}<p>Nenhuma tarefa encontrada.</p>{% endif %}
+    </section>
+  </main>
+</body>
+</html>

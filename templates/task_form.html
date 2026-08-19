@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ 'Editar' if task else 'Nova' }} tarefa — TaskFlow</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body><main class="container">
+  <h1>{{ 'Editar' if task else 'Nova' }} tarefa</h1>
+  {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<p class="mensagem {{ category }}" role="alert">{{ message }}</p>{% endfor %}{% endwith %}
+  <form method="post">
+    <label for="title">Título</label>
+    <input id="title" name="title" required minlength="3" maxlength="100" value="{{ task.title if task else '' }}">
+    <label for="description">Descrição (opcional)</label>
+    <textarea id="description" name="description">{{ task.description if task else '' }}</textarea>
+    <label for="due_date">Data de prazo</label>
+    <input id="due_date" name="due_date" type="date" required min="{{ today }}" value="{{ task.due_date if task else '' }}">
+    <label for="priority">Prioridade</label>
+    <select id="priority" name="priority" required>{% for value in ['Baixa', 'Média', 'Alta'] %}<option {{ 'selected' if task and task.priority == value else '' }}>{{ value }}</option>{% endfor %}</select>
+    <label for="status">Situação</label>
+    <select id="status" name="status" required>{% for value in ['Pendente', 'Em andamento', 'Concluída'] %}<option {{ 'selected' if task and task.status == value else '' }}>{{ value }}</option>{% endfor %}</select>
+    <p><button type="submit">Salvar tarefa</button> <a href="{{ url_for('index') }}">Cancelar</a></p>
+  </form>
+</main></body>
+</html>

@@ -1,0 +1,9 @@
+body { font-family: Arial, sans-serif; background: #f4f6f8; color: #1d2939; margin: 0; }
+.container { max-width: 950px; margin: 32px auto; padding: 24px; background: #fff; border-radius: 10px; }
+.pular { position: absolute; left: -9999px; }.pular:focus { left: 8px; top: 8px; background: #fff; padding: 8px; }
+label { display: block; font-weight: bold; margin-top: 16px; } input, textarea, select { box-sizing: border-box; width: 100%; padding: 9px; margin-top: 5px; font: inherit; }
+button, .botao { display: inline-block; border: 0; border-radius: 5px; background: #0759b5; color: #fff; padding: 8px 12px; font-weight: bold; cursor: pointer; text-decoration: none; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #e69b00; outline-offset: 2px; }
+.perigo { background: #ae1c1c; }.mensagem { padding: 10px; }.success { background: #d9f4df; }.error { background: #ffe0df; }
+table { border-collapse: collapse; width: 100%; margin-top: 12px; } th, td { text-align: left; vertical-align: top; padding: 10px; border-bottom: 1px solid #cbd5e1; } .acoes form { display: inline; } .acoes button { margin: 2px; }
+@media (max-width: 650px) { .container { margin: 0; border-radius: 0; } table { font-size: .85rem; } th, td { padding: 6px; } }
