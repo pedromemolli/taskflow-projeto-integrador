@@ -53,22 +53,3 @@ python -m unittest discover -s tests -v
 ```
 
 Os testes usam um banco temporário e não alteram suas tarefas reais.
-
-## Como registrar no GitHub
-
-```powershell
-git init
-git add .
-git commit -m "Cria versão inicial do TaskFlow"
-```
-
-Depois, crie um repositório vazio no GitHub e siga as instruções mostradas pela plataforma para conectar e enviar o projeto.
-
-## Como publicar no Render
-
-1. Envie o projeto a um repositório do GitHub.
-2. No Render, selecione **New > Blueprint** e conecte o repositório.
-3. O arquivo `render.yaml` preencherá os comandos de instalação e inicialização.
-4. Confirme a criação e aguarde a URL pública.
-
-Para uso acadêmico, o SQLite é suficiente. Em uma aplicação com muitos usuários, substitua por PostgreSQL, pois o armazenamento de arquivos do Render pode ser temporário.
