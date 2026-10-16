@@ -2,6 +2,12 @@
 
 Aplicação web acessível para cadastro, organização e acompanhamento de tarefas.
 
+## Acesse online
+
+🔗 **https://taskflow-pi2.onrender.com**
+
+> Na hospedagem gratuita do Render, o site entra em repouso após um período sem acesso. O primeiro carregamento pode levar cerca de um minuto; depois disso, ele responde normalmente.
+
 ## Requisitos do PI II contemplados
 
 | Requisito | Implementação no projeto |
