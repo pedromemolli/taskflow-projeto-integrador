@@ -2,6 +2,7 @@ services:
   - type: web
     name: taskflow-pi2
     runtime: python
+    plan: free
     buildCommand: pip install -r requirements-cloud.txt
     startCommand: gunicorn app:app
     envVars:
