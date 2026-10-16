@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Página não encontrada — TaskFlow{% endblock %}
+{% block content %}
+<section class="erro-pagina" aria-labelledby="titulo-404">
+  <h1 id="titulo-404">Página não encontrada</h1>
+  <p>A tarefa ou página solicitada não existe ou foi removida.</p>
+  <a class="botao" href="{{ url_for('index') }}">Voltar ao TaskFlow</a>
+</section>
+{% endblock %}

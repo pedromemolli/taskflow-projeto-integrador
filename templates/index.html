@@ -1,49 +1,106 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TaskFlow</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
-  <main id="conteudo" class="container">
-    <header>
-      <h1>TaskFlow</h1>
-      <p>Organize suas tarefas e seus prazos.</p>
-      <a class="botao" href="{{ url_for('create_task') }}">Nova tarefa</a>
-    </header>
+{% extends "base.html" %}
+{% block title %}TaskFlow — Tarefas{% endblock %}
+{% block content %}
+<header class="cabecalho">
+  <div>
+    <h1>TaskFlow</h1>
+    <p>Organize tarefas, prioridades e prazos em um único ambiente.</p>
+  </div>
+  <a class="botao" href="{{ url_for('create_task') }}">Nova tarefa</a>
+</header>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for category, message in messages %}<p class="mensagem {{ category }}" role="status">{{ message }}</p>{% endfor %}
-    {% endwith %}
+<section aria-labelledby="resumo" class="painel-resumo">
+  <h2 id="resumo">Resumo das tarefas</h2>
+  <div class="cards-resumo">
+    <article><strong>{{ totals.total }}</strong><span>Total</span></article>
+    <article><strong>{{ totals.pending }}</strong><span>Pendentes</span></article>
+    <article><strong>{{ totals.in_progress }}</strong><span>Em andamento</span></article>
+    <article><strong>{{ totals.completed }}</strong><span>Concluídas</span></article>
+    <article><strong>{{ totals.overdue }}</strong><span>Atrasadas</span></article>
+  </div>
+</section>
 
-    <section aria-labelledby="resumo"><h2 id="resumo">Resumo</h2>
-      <p>{{ totals.total }} no total · {{ totals.pending or 0 }} pendentes · {{ totals.in_progress or 0 }} em andamento · {{ totals.completed or 0 }} concluídas</p>
-    </section>
-
-    <section aria-labelledby="lista"><h2 id="lista">Lista de tarefas</h2>
-      {% if tasks %}
-      <table>
-        <thead><tr><th>Tarefa</th><th>Data de prazo</th><th>Prioridade</th><th>Situação</th><th>Ações</th></tr></thead>
-        <tbody>
-        {% for task in tasks %}
-          <tr>
-            <td><strong>{{ task.title }}</strong>{% if task.description %}<br><small>{{ task.description }}</small>{% endif %}</td>
-            <td>{{ task.due_date[8:10] }}/{{ task.due_date[5:7] }}/{{ task.due_date[0:4] }}</td>
-            <td>{{ task.priority }}</td><td>{{ task.status }}</td>
-            <td class="acoes">
-              <a href="{{ url_for('edit_task', task_id=task.id) }}">Editar</a>
-              {% if task.status != 'Concluída' %}<form action="{{ url_for('complete_task', task_id=task.id) }}" method="post"><button>Concluir</button></form>{% endif %}
-              <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post"><button class="perigo">Excluir</button></form>
-            </td>
-          </tr>
+<section aria-labelledby="filtros" class="secao-filtros">
+  <h2 id="filtros">Filtrar tarefas</h2>
+  <form method="get" class="filtros" role="search">
+    <div>
+      <label for="status-filter">Situação</label>
+      <select id="status-filter" name="status">
+        <option value="">Todas</option>
+        {% for value in statuses %}
+          <option value="{{ value }}" {{ 'selected' if status_filter == value else '' }}>{{ value }}</option>
         {% endfor %}
-        </tbody>
-      </table>
-      {% else %}<p>Nenhuma tarefa encontrada.</p>{% endif %}
-    </section>
-  </main>
-</body>
-</html>
+      </select>
+    </div>
+    <div>
+      <label for="priority-filter">Prioridade</label>
+      <select id="priority-filter" name="priority">
+        <option value="">Todas</option>
+        {% for value in priorities %}
+          <option value="{{ value }}" {{ 'selected' if priority_filter == value else '' }}>{{ value }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filtros-acoes">
+      <button type="submit">Aplicar filtros</button>
+      <a class="botao secundario" href="{{ url_for('index') }}">Limpar</a>
+    </div>
+  </form>
+</section>
+
+<section aria-labelledby="lista">
+  <div class="titulo-lista">
+    <h2 id="lista">Lista de tarefas</h2>
+    {% if status_filter or priority_filter %}
+      <p class="filtro-ativo">Exibindo resultado filtrado.</p>
+    {% endif %}
+  </div>
+
+  {% if tasks %}
+  <div class="tabela-wrapper" tabindex="0" aria-label="Tabela de tarefas; em telas pequenas, deslize horizontalmente">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Tarefa</th>
+          <th scope="col">Data de prazo</th>
+          <th scope="col">Prioridade</th>
+          <th scope="col">Situação</th>
+          <th scope="col">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for task in tasks %}
+        <tr>
+          <td>
+            <strong>{{ task.title }}</strong>
+            {% if task.description %}<br><small>{{ task.description }}</small>{% endif %}
+          </td>
+          <td>
+            {{ task.due_date[8:10] }}/{{ task.due_date[5:7] }}/{{ task.due_date[0:4] }}
+            {% if task.status != 'Concluída' and task.due_date < today %}
+              <span class="badge atraso">Atrasada</span>
+            {% endif %}
+          </td>
+          <td><span class="badge prioridade-{{ task.priority|lower|replace('é','e') }}">{{ task.priority }}</span></td>
+          <td><span class="badge">{{ task.status }}</span></td>
+          <td class="acoes">
+            <a class="acao-link" href="{{ url_for('edit_task', task_id=task.id) }}">Editar</a>
+            {% if task.status != 'Concluída' %}
+              <form action="{{ url_for('complete_task', task_id=task.id) }}" method="post">
+                <button type="submit" class="botao-pequeno">Concluir</button>
+              </form>
+            {% endif %}
+            <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post" data-confirm-delete data-task-title="{{ task.title }}">
+              <button type="submit" class="perigo botao-pequeno">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p class="vazio">Nenhuma tarefa encontrada para os critérios selecionados.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,30 +1,35 @@
 @echo off
-REM ============================================================
-REM  TaskFlow - inicializacao automatica
-REM  Duplo clique neste arquivo para instalar (se necessario)
-REM  e iniciar o servidor, abrindo o navegador sozinho.
-REM ============================================================
-
+setlocal
 cd /d "%~dp0"
 
 IF NOT EXIST ".venv" (
     echo Criando ambiente virtual pela primeira vez...
     py -m venv .venv
+    IF ERRORLEVEL 1 goto :erro
 )
 
 call .venv\Scripts\activate.bat
+IF ERRORLEVEL 1 goto :erro
 
 echo Instalando/atualizando dependencias...
-pip install -r requirements.txt -q
+python -m pip install -r requirements.txt
+IF ERRORLEVEL 1 goto :erro
 
 echo.
 echo Iniciando o TaskFlow...
 echo Acesse http://127.0.0.1:5000 no navegador.
-echo Para PARAR o servidor, feche esta janela ou pressione Ctrl+C.
+echo Para parar o servidor, pressione Ctrl+C.
 echo.
 
 start "" http://127.0.0.1:5000
+python app.py
+goto :fim
 
-flask --app app run --debug
-
+:erro
+echo.
+echo Ocorreu um erro ao preparar ou iniciar o TaskFlow.
+echo Verifique se o Python 3 esta instalado e disponivel pelo comando "py".
 pause
+
+:fim
+endlocal
